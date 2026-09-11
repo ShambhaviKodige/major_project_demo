@@ -12,7 +12,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ExpressError = require("./utils/ExpressError");
 const session = require("express-session");
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const flash = require("connect-flash");
 const ejsMate = require("ejs-mate");
 app.engine('ejs', ejsMate);
@@ -39,12 +39,13 @@ async function main() {
     await mongoose.connect(db_url);
 };
 
-const store = new MongoStore({
-    url: db_url,
-    crypto: { secret: process.env.SECRET },
+const store = MongoStore.create({
+    mongoUrl: db_url,
+    crypto: {
+        secret: process.env.SECRET,
+    },
     touchAfter: 24 * 3600,
 });
-
 store.on("error", () => {
     console.log("mongosession store error", error);
 });
